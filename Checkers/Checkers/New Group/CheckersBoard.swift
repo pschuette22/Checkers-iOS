@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 enum TileColor {
     case black
     case white
@@ -23,10 +22,10 @@ enum TilePiece {
 }
 
 struct Tile {
-    
+
     let color: TileColor
     let piece: TilePiece
-    
+
     init(color: TileColor, piece: TilePiece) {
         self.color = color
         self.piece = piece
@@ -34,31 +33,29 @@ struct Tile {
 }
 
 class CheckersBoard {
-    
+
     private var tiles = [[Tile]]()
-    
+
     init() {
-        
+
         // Initialize the checkers board model
         // Should contain an 8x8 multi-array of tiles
         initTiles()
     }
-    
-    
-}
 
+}
 
 // MARK: - Private class functions
 extension CheckersBoard {
-    
+
     /// Initialize the tiles before anyone has played
     private func initTiles() {
-        
+
         var isWhiteTile = true
         for x in 0 ..< 8 {
             var row = [Tile]()
             for _ in 0 ..< 8 {
-                
+
                 var piece: TilePiece = .empty
                 if (isWhiteTile) {
                     if (x < 4) {
@@ -67,7 +64,7 @@ extension CheckersBoard {
                         piece = .blackPiece
                     }
                 }
-                
+
                 let color: TileColor = isWhiteTile ? .white : .black
                 let tile = Tile(color: color, piece: piece)
                 row.append(tile)
@@ -78,17 +75,16 @@ extension CheckersBoard {
             // Flip it again at the end to account for the change in color per row
             isWhiteTile = !isWhiteTile
         }
-        
-    }
-    
-}
 
+    }
+
+}
 
 // MARK: - Class functions
 extension CheckersBoard {
-    
+
     func getTile(x: Int, y: Int) -> Tile {
         return tiles[y][x]
     }
-    
+
 }

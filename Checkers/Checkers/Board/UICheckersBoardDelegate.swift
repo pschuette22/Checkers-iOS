@@ -8,9 +8,8 @@
 
 import Foundation
 
-
 protocol UICheckersBoardDelegate {
-    
+
     func getTitle(x: Int, y: Int) -> Tile
-    
+
 }
