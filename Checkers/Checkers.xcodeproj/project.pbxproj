@@ -15,6 +15,10 @@
 		6010645C2048F49A004BD16A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6010645A2048F49A004BD16A /* LaunchScreen.storyboard */; };
 		601064672048F49A004BD16A /* CheckersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064662048F49A004BD16A /* CheckersTests.swift */; };
 		601064722048F49A004BD16A /* CheckersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064712048F49A004BD16A /* CheckersUITests.swift */; };
+		601064802048F50F004BD16A /* UICheckersBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6010647F2048F50F004BD16A /* UICheckersBoard.swift */; };
+		601064822048F6B7004BD16A /* UICheckersBoardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064812048F6B7004BD16A /* UICheckersBoardDelegate.swift */; };
+		601064842048F806004BD16A /* CheckersBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064832048F806004BD16A /* CheckersBoard.swift */; };
+		601064862048FC23004BD16A /* UIBoardTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064852048FC23004BD16A /* UIBoardTile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +53,10 @@
 		6010646D2048F49A004BD16A /* CheckersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CheckersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		601064712048F49A004BD16A /* CheckersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckersUITests.swift; sourceTree = "<group>"; };
 		601064732048F49A004BD16A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6010647F2048F50F004BD16A /* UICheckersBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICheckersBoard.swift; sourceTree = "<group>"; };
+		601064812048F6B7004BD16A /* UICheckersBoardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICheckersBoardDelegate.swift; sourceTree = "<group>"; };
+		601064832048F806004BD16A /* CheckersBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckersBoard.swift; sourceTree = "<group>"; };
+		601064852048FC23004BD16A /* UIBoardTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBoardTile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +114,8 @@
 				6010645A2048F49A004BD16A /* LaunchScreen.storyboard */,
 				6010645D2048F49A004BD16A /* Info.plist */,
 				601064552048F49A004BD16A /* Checkers.xcdatamodeld */,
+				60106488204902D6004BD16A /* Models */,
+				601064872048FC2C004BD16A /* Board */,
 			);
 			path = Checkers;
 			sourceTree = "<group>";
@@ -126,6 +136,25 @@
 				601064732048F49A004BD16A /* Info.plist */,
 			);
 			path = CheckersUITests;
+			sourceTree = "<group>";
+		};
+		601064872048FC2C004BD16A /* Board */ = {
+			isa = PBXGroup;
+			children = (
+				6010647F2048F50F004BD16A /* UICheckersBoard.swift */,
+				601064812048F6B7004BD16A /* UICheckersBoardDelegate.swift */,
+				601064852048FC23004BD16A /* UIBoardTile.swift */,
+			);
+			path = Board;
+			sourceTree = "<group>";
+		};
+		60106488204902D6004BD16A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				601064832048F806004BD16A /* CheckersBoard.swift */,
+			);
+			name = Models;
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,8 +291,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				601064842048F806004BD16A /* CheckersBoard.swift in Sources */,
+				601064822048F6B7004BD16A /* UICheckersBoardDelegate.swift in Sources */,
+				601064862048FC23004BD16A /* UIBoardTile.swift in Sources */,
 				601064512048F49A004BD16A /* ViewController.swift in Sources */,
 				601064572048F49A004BD16A /* Checkers.xcdatamodeld in Sources */,
+				601064802048F50F004BD16A /* UICheckersBoard.swift in Sources */,
 				6010644F2048F49A004BD16A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
