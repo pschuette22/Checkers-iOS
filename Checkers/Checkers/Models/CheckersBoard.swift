@@ -58,7 +58,7 @@ extension CheckersBoard {
 
                 var piece: TilePiece = .empty
                 if (isWhiteTile) {
-                    if (x < 4) {
+                    if (x < 3) {
                         piece = .whitePiece
                     } else if (x > 4) {
                         piece = .blackPiece
