@@ -44,17 +44,16 @@ extension UICheckersBoard {
         let tileWidth = self.frame.width / 8
 
         for y in 0 ..< 8 {
+            let rowY = CGFloat(integerLiteral: y) * tileHeight
+            let rowFrame = CGRect(x: 0.0, y: rowY, width: self.frame.width, height: tileHeight)
+            let row = UIView(frame: rowFrame)
+            self.addSubview(row)
+
             for x in 0 ..< 8 {
                 // Draw the tile at this location
-                drawTile(x: x, y: y, width: tileWidth, height: tileHeight)
+                let tileIndex = TileIndex(x: x, y: y)!
+                drawTile(in: row, at: tileIndex, width: tileWidth, height: tileHeight)
             }
-        }
-    }
-
-    /// Remove all the tiles from the view
-    func removeAllSubviews() {
-        for subview in self.subviews {
-            subview.removeFromSuperview()
         }
     }
 
@@ -65,17 +64,58 @@ extension UICheckersBoard {
     ///   - y: y coordinate of the tile
     ///   - height: height of the tile
     ///   - width: width of the tile
-    func drawTile(x: Int, y: Int, width: CGFloat, height: CGFloat) {
-        guard let tile = delegate?.getTitle(x: x, y: y) else {
+    private func drawTile(in rowView: UIView, at index: TileIndex, width: CGFloat, height: CGFloat) {
+        guard let tile = delegate?.getTile(at: index) else {
             fatalError("Must be able to fetch tiles at any point")
         }
 
-        let tileFrame = CGRect(x: CGFloat(integerLiteral: x) * width, y: CGFloat(integerLiteral: y) * height, width: width, height: height)
+        let x = CGFloat(integerLiteral: index.x) * width
+        let tileFrame = CGRect(x: x, y: 0.0, width: width, height: height)
 
         let tileView = UIBoardTile(frame: tileFrame)
-        self.addSubview(tileView)
+        rowView.addSubview(tileView)
         tileView.doDraw(tile: tile)
 
+    }
+
+    // Redraw a tile and remove mask at this index
+    func redrawTile(at index: TileIndex) {
+        removeTileMask(at: index)
+        guard let tile = delegate?.getTile(at: index) else {
+            fatalError("Unable to retrieve tile for redraw")
+        }
+        tileView(at: index)?.doDraw(tile: tile)
+    }
+
+    /// Calculate a tile index from a point in the board view
+    ///
+    /// - Parameter point: location in view
+    /// - Returns: tile index for selected location
+    func tileIndex(at point: CGPoint) -> TileIndex? {
+
+        let tileWidth = self.frame.width / 8
+        let tileHeight = self.frame.height / 8
+
+        let x = Int(floor(point.x / tileWidth))
+        let y = Int(floor(point.y / tileHeight))
+
+        return TileIndex(x: x, y: y)
+    }
+
+    func addTileMask(at index: TileIndex, mask: UIColor) {
+        tileView(at: index)?.tileMask = mask
+    }
+
+    func removeTileMask(at index: TileIndex) {
+        tileView(at: index)?.tileMask = nil
+    }
+
+    private func tileView(at index: TileIndex) -> UIBoardTile? {
+
+        if let tileView = subviews[index.y].subviews[index.x] as? UIBoardTile {
+            return tileView
+        }
+        return nil
     }
 
 }

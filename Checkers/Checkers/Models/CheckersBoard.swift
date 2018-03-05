@@ -8,28 +8,9 @@
 
 import Foundation
 
-enum TileColor {
+enum Player {
+    case red
     case black
-    case white
-}
-
-enum TilePiece {
-    case empty
-    case whitePiece
-    case whiteKing
-    case blackPiece
-    case blackKing
-}
-
-struct Tile {
-
-    let color: TileColor
-    let piece: TilePiece
-
-    init(color: TileColor, piece: TilePiece) {
-        self.color = color
-        self.piece = piece
-    }
 }
 
 class CheckersBoard {
@@ -56,17 +37,24 @@ extension CheckersBoard {
             var row = [Tile]()
             for _ in 0 ..< 8 {
 
-                var piece: TilePiece = .empty
+                var piece: TilePiece
+                var owner: Player?
                 if (isWhiteTile) {
                     if (x < 3) {
-                        piece = .whitePiece
+                        piece = .pawn
+                        owner = .red
                     } else if (x > 4) {
-                        piece = .blackPiece
+                        piece = .pawn
+                        owner = .black
+                    } else {
+                        piece = .empty
                     }
+                } else {
+                    piece = .outOfPlay
                 }
 
                 let color: TileColor = isWhiteTile ? .white : .black
-                let tile = Tile(color: color, piece: piece)
+                let tile = Tile(color: color, piece: piece, owner: owner)
                 row.append(tile)
                 isWhiteTile = !isWhiteTile
             }
@@ -83,8 +71,25 @@ extension CheckersBoard {
 // MARK: - Class functions
 extension CheckersBoard {
 
-    func getTile(x: Int, y: Int) -> Tile {
-        return tiles[y][x]
+    func tile(at index: TileIndex) -> Tile {
+        return tiles[index.y][index.x]
+    }
+
+    func set(tile: Tile, at index: TileIndex) {
+        tiles[index.y][index.x] = tile
+    }
+
+    func isKingingTile(at index: TileIndex, for player: Player) -> Bool {
+
+        return index.y == (player == .black ? 0 : 7)
+    }
+
+    func tileCount(for player: Player) -> Int {
+        var count = 0
+        for row in tiles {
+            count += row.filter({$0.owner == player}).count
+        }
+        return count
     }
 
 }
