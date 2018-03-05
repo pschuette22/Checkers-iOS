@@ -21,7 +21,13 @@
 		601064802048F50F004BD16A /* UICheckersBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6010647F2048F50F004BD16A /* UICheckersBoard.swift */; };
 		601064822048F6B7004BD16A /* UICheckersBoardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064812048F6B7004BD16A /* UICheckersBoardDelegate.swift */; };
 		601064862048FC23004BD16A /* UIBoardTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601064852048FC23004BD16A /* UIBoardTile.swift */; };
+		60486D70204DB781009386F1 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60486D6F204DB781009386F1 /* UIView.swift */; };
 		60F62C3C204A25D800BF5FEC /* CheckersBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F62C3B204A25D800BF5FEC /* CheckersBoard.swift */; };
+		60F62C3E204B32F700BF5FEC /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F62C3D204B32F700BF5FEC /* GameEngine.swift */; };
+		60F62C41204B3CB100BF5FEC /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F62C40204B3CB100BF5FEC /* Move.swift */; };
+		60F62C43204B404900BF5FEC /* GameEngineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F62C42204B404900BF5FEC /* GameEngineDelegate.swift */; };
+		60F62C45204B573100BF5FEC /* TileIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F62C44204B573100BF5FEC /* TileIndex.swift */; };
+		60F62C47204B64EA00BF5FEC /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F62C46204B64EA00BF5FEC /* Tile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +69,13 @@
 		6010647F2048F50F004BD16A /* UICheckersBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICheckersBoard.swift; sourceTree = "<group>"; };
 		601064812048F6B7004BD16A /* UICheckersBoardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICheckersBoardDelegate.swift; sourceTree = "<group>"; };
 		601064852048FC23004BD16A /* UIBoardTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBoardTile.swift; sourceTree = "<group>"; };
+		60486D6F204DB781009386F1 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		60F62C3B204A25D800BF5FEC /* CheckersBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CheckersBoard.swift; path = Checkers/Models/CheckersBoard.swift; sourceTree = SOURCE_ROOT; };
+		60F62C3D204B32F700BF5FEC /* GameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
+		60F62C40204B3CB100BF5FEC /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Move.swift; path = Checkers/Models/Move.swift; sourceTree = SOURCE_ROOT; };
+		60F62C42204B404900BF5FEC /* GameEngineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameEngineDelegate.swift; path = Checkers/Engine/GameEngineDelegate.swift; sourceTree = SOURCE_ROOT; };
+		60F62C44204B573100BF5FEC /* TileIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TileIndex.swift; path = Checkers/Models/TileIndex.swift; sourceTree = SOURCE_ROOT; };
+		60F62C46204B64EA00BF5FEC /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Tile.swift; path = Checkers/Models/Tile.swift; sourceTree = SOURCE_ROOT; };
 		63430675029916835006321B /* Pods_CheckersTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CheckersTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		67EC8C0C7B03DCCF01BA72D5 /* Pods_CheckersUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CheckersUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		76A7A41E082F8A863403E3E6 /* Pods-Checkers.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Checkers.release.xcconfig"; path = "Pods/Target Support Files/Pods-Checkers/Pods-Checkers.release.xcconfig"; sourceTree = "<group>"; };
@@ -133,6 +145,7 @@
 				601064552048F49A004BD16A /* Checkers.xcdatamodeld */,
 				60106488204902D6004BD16A /* Models */,
 				601064872048FC2C004BD16A /* Board */,
+				60F62C3F204B32FC00BF5FEC /* Engine */,
 			);
 			path = Checkers;
 			sourceTree = "<group>";
@@ -161,6 +174,7 @@
 				6010647F2048F50F004BD16A /* UICheckersBoard.swift */,
 				601064812048F6B7004BD16A /* UICheckersBoardDelegate.swift */,
 				601064852048FC23004BD16A /* UIBoardTile.swift */,
+				60486D6F204DB781009386F1 /* UIView.swift */,
 			);
 			path = Board;
 			sourceTree = "<group>";
@@ -169,8 +183,21 @@
 			isa = PBXGroup;
 			children = (
 				60F62C3B204A25D800BF5FEC /* CheckersBoard.swift */,
+				60F62C40204B3CB100BF5FEC /* Move.swift */,
+				60F62C44204B573100BF5FEC /* TileIndex.swift */,
+				60F62C46204B64EA00BF5FEC /* Tile.swift */,
 			);
 			name = Models;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		60F62C3F204B32FC00BF5FEC /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				60F62C3D204B32F700BF5FEC /* GameEngine.swift */,
+				60F62C42204B404900BF5FEC /* GameEngineDelegate.swift */,
+			);
+			name = Engine;
 			path = "New Group";
 			sourceTree = "<group>";
 		};
@@ -487,9 +514,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60486D70204DB781009386F1 /* UIView.swift in Sources */,
+				60F62C43204B404900BF5FEC /* GameEngineDelegate.swift in Sources */,
 				601064822048F6B7004BD16A /* UICheckersBoardDelegate.swift in Sources */,
+				60F62C41204B3CB100BF5FEC /* Move.swift in Sources */,
+				60F62C47204B64EA00BF5FEC /* Tile.swift in Sources */,
+				60F62C45204B573100BF5FEC /* TileIndex.swift in Sources */,
 				60F62C3C204A25D800BF5FEC /* CheckersBoard.swift in Sources */,
 				601064862048FC23004BD16A /* UIBoardTile.swift in Sources */,
+				60F62C3E204B32F700BF5FEC /* GameEngine.swift in Sources */,
 				601064512048F49A004BD16A /* ViewController.swift in Sources */,
 				601064572048F49A004BD16A /* Checkers.xcdatamodeld in Sources */,
 				601064802048F50F004BD16A /* UICheckersBoard.swift in Sources */,

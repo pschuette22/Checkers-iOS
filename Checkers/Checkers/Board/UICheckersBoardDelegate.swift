@@ -10,6 +10,6 @@ import Foundation
 
 protocol UICheckersBoardDelegate {
 
-    func getTitle(x: Int, y: Int) -> Tile
+    func getTile(at index: TileIndex) -> Tile
 
 }
