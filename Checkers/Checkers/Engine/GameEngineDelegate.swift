@@ -10,8 +10,10 @@ import Foundation
 
 /// Delegate for responding to game actions
 protocol GameEngineDelegate: class {
-
-    var board: CheckersBoard { get }
+    
+    var board: CheckersBoard! { get }
+    
+    func player(going direction: Direction) -> Player
 
     func selectIgnored(_ message: String)
 

@@ -8,20 +8,23 @@
 
 import Foundation
 
-enum Player {
-    case red
-    case black
-}
 
+/// Model class for the Checkers Board
 class CheckersBoard {
 
+    /// Tiles on the board
     private var tiles = [[Tile]]()
 
-    init() {
+    /// initialize the checkers board with two players
+    ///
+    /// - Parameters:
+    ///   - player1: player 1 is headed in the down direction
+    ///   - player2: player 2 is headed in the up direction
+    init(player1: Player, player2: Player) {
 
         // Initialize the checkers board model
         // Should contain an 8x8 multi-array of tiles
-        initTiles()
+        initTiles(player1: player1, player2: player2)
     }
 
 }
@@ -30,7 +33,7 @@ class CheckersBoard {
 extension CheckersBoard {
 
     /// Initialize the tiles before anyone has played
-    private func initTiles() {
+    private func initTiles(player1: Player, player2: Player) {
 
         var isWhiteTile = true
         for x in 0 ..< 8 {
@@ -42,10 +45,10 @@ extension CheckersBoard {
                 if (isWhiteTile) {
                     if (x < 3) {
                         piece = .pawn
-                        owner = .red
+                        owner = player1
                     } else if (x > 4) {
                         piece = .pawn
-                        owner = .black
+                        owner = player2
                     } else {
                         piece = .empty
                     }
@@ -91,7 +94,7 @@ extension CheckersBoard {
 
     func isKingingTile(at index: TileIndex, for player: Player) -> Bool {
 
-        return index.y == (player == .black ? 0 : 7)
+        return index.y == (player.pawnDirection == .up ? 0 : 7)
     }
 
     func tileCount(for player: Player) -> Int {
@@ -102,8 +105,8 @@ extension CheckersBoard {
         return count
     }
 
-    func reset() {
+    func reset(player1: Player, player2: Player) {
         tiles.removeAll()
-        initTiles()
+        initTiles(player1: player1, player2: player2)
     }
 }

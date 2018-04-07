@@ -10,25 +10,27 @@ import UIKit
 
 class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDelegate {
 
+    var players = Set<Player>()
+    
     var boardView: UICheckersBoard!
 
-    let board = CheckersBoard()
-
-    private var engine: GameEngine!
+    var board: CheckersBoard!
+ 
+    var engine: GameEngine!
 
     private var tapRecognizer: UITapGestureRecognizer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-
+        initPlayers()
         // Draw the board
         drawInitialBoard()
         // Register a gesture recognizer
         tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(recognizer:)))
         boardView.addGestureRecognizer(tapRecognizer)
 
-        engine = GameEngine(delegate: self)
+        engine = GameEngine(delegate: self, activePlayer: player(going: .up))
     }
 
     override func didReceiveMemoryWarning() {
@@ -60,8 +62,20 @@ class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDeleg
 
 // MARK: - Private class functions
 extension ViewController {
+    
+    
+    /// Initialize the player set
+    private func initPlayers() {
+        let player1 = Player(name: "p1", color: .red, pawnDirection: .down)
+        let player2 = Player(name: "p2", color: .black, pawnDirection: .up)
+        players.insert(player1)
+        players.insert(player2)
+    }
+    
     private func drawInitialBoard() {
 
+        board = CheckersBoard(player1: player(going: .down), player2: player(going: .up))
+        
         let topPadding = UIApplication.shared.statusBarFrame.size.height + 8
 
         // Top padding of 8, side padding 0. Must be a square
@@ -83,7 +97,7 @@ extension ViewController {
     }
 
     private func resetGame() {
-        board.reset()
+        board.reset(player1: player(going: .down), player2: player(going: .up))
         boardView.doDraw()
     }
 }
@@ -100,6 +114,10 @@ extension ViewController {
 // MARK: - GameEngineDelegate methods
 extension ViewController {
 
+    func player(going direction: Direction) -> Player {
+        return players.first(where: {$0.pawnDirection == direction})!
+    }
+    
     func selectIgnored(_ message: String) {
         print("Select Ignored: \(message)")
     }
@@ -148,7 +166,7 @@ extension ViewController {
     }
 
     func didFinishGame(_ winner: Player) {
-        let title = (winner == .black ? "Black" : "Red") + " wins!"
+        let title =  "\(winner.name) wins!"
 
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cool", style: UIAlertActionStyle.cancel, handler: nil))

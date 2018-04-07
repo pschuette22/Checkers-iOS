@@ -62,13 +62,15 @@ extension UIBoardTile {
 
         if let owner = tile.owner {
             var text: String!
-            switch owner {
+            switch owner.color {
             case .red:
                 text = "Red"
                 textView.textColor = UIColor.red
             case .black:
                 text = "Blk"
                 textView.textColor = UIColor.black
+            default:
+                fatalError("Only red and black player colors supported right now")
             }
             if tile.piece == .king {
                 print("It's a King!")

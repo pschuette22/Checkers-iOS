@@ -11,13 +11,16 @@ import Foundation
 /// Checkers game engine
 /// This drives the logic of the game
 class GameEngine {
-
+    
     private weak var delegate: GameEngineDelegate?
-    private var activePlayer: Player!
+    
+    private var activePlayer: Player
 
-    private var otherPlayer: Player! {
+    private var otherPlayer: Player {
         get {
-            return (activePlayer == .red) ? .black : .red
+            let isDown = activePlayer.pawnDirection == .down
+            let direction: Direction = isDown ? .up : .down
+            return delegate!.player(going: direction)
         }
     }
 
@@ -34,7 +37,7 @@ class GameEngine {
     private var validMoves: [Move]?
     private var isJumpChain = false
 
-    init(delegate: GameEngineDelegate, activePlayer: Player = .red) {
+    init(delegate: GameEngineDelegate, activePlayer: Player) {
         self.delegate = delegate
         self.activePlayer = activePlayer
     }
@@ -54,12 +57,12 @@ extension GameEngine {
             delegate?.selectIgnored("Tile out of play")
         } else if selectedTileIndex == nil {
             // There isn't a currently selected tile,
-            return didStartTurn(on: tile, at: tileIndex)
+            return didStartTurn(for: activePlayer, on: tile, at: tileIndex)
         } else if selectedTileIndex == tileIndex && !isJumpChain {
             return didUnselectTile(at: tileIndex)
         } else if tile.owner == activePlayer && !isJumpChain {
             _ = didUnselectTile(at: selectedTileIndex!)
-            return didStartTurn(on: tile, at: tileIndex)
+            return didStartTurn(for: activePlayer, on: tile, at: tileIndex)
         } else if let move = validMoves?.first(where: {$0.destination == tileIndex}) {
             let otherMoves = validMoves?.filter({$0 != move}) ?? []
             return didMove(move, ignoring: otherMoves)
@@ -74,7 +77,7 @@ extension GameEngine {
         return true
     }
 
-    private func didStartTurn(on tile: Tile, at index: TileIndex) -> Bool {
+    private func didStartTurn(for player: Player, on tile: Tile, at index: TileIndex) -> Bool {
 
         if tile.owner != activePlayer {
             delegate?.selectIgnored("Tried to select tile active player doesn't own")
@@ -84,27 +87,27 @@ extension GameEngine {
         // This owner has a tile at this location
         // Calculate the moves from here
         selectedTileIndex = index
-        validMoves = calculateMoves(on: tile, at: index, jumpsOnly: false)
+        validMoves = calculateMoves(for: player, on: tile, at: index, jumpsOnly: false)
 
         delegate?.didStartTurn(at: index, with: validMoves!)
 
         return true
     }
 
-    private func calculateMoves(on tile: Tile, at index: TileIndex, jumpsOnly: Bool) -> [Move] {
+    private func calculateMoves(for player: Player, on tile: Tile, at index: TileIndex, jumpsOnly: Bool) -> [Move] {
 
+        if tile.owner != player {
+            fatalError("Cannot calculate moves for a tile the player does not own")
+        }
+        
         var moves = [Move]()
 
-        var verticals: [Direction] = [.up, .down]
+        var verticals = [Direction]()
 
-        if tile.piece == .pawn {
-            if tile.owner == .red {
-                // Remove up direction
-                verticals.remove(at: 0)
-            } else if tile.owner == .black {
-                // Remove down direction
-                verticals.remove(at: 1)
-            }
+        if tile.piece == .king {
+            verticals.append(contentsOf: [.up, .down])
+        } else if tile.piece == .pawn {
+            verticals.append(player.pawnDirection)
         }
 
         for moveIndex in index.validMoveIndexes(verticleMovements: verticals) {
@@ -174,7 +177,7 @@ extension GameEngine {
         // Is there an opportunity for another jump ?
         // Calculate jump moves for this tile
         let activeTileIndex = move.destination!
-        var doubleJumpMoves = calculateMoves(on: tile, at: activeTileIndex, jumpsOnly: true)
+        var doubleJumpMoves = calculateMoves(for: activePlayer, on: tile, at: activeTileIndex, jumpsOnly: true)
         if doubleJumpMoves.isEmpty {
             return false
         }
@@ -197,14 +200,15 @@ extension GameEngine {
         }
 
         // Switch the active player
-        activePlayer = (activePlayer == .black) ? .red : .black
+        activePlayer = otherPlayer
         // Clear out the selected tile
         selectedTileIndex = nil
         isJumpChain = false
+        // indicates the player has finished their turn
         return true
     }
 
-    private func didFinishGame(winner: Player) {
+    private func didFinishGame(winner:Player) {
         delegate?.didFinishGame(winner)
     }
 }
