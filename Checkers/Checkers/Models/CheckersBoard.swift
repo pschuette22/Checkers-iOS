@@ -102,4 +102,8 @@ extension CheckersBoard {
         return count
     }
 
+    func reset() {
+        tiles.removeAll()
+        initTiles()
+    }
 }

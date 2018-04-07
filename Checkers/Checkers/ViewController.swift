@@ -81,6 +81,11 @@ extension ViewController {
         self.view.addSubview(boardView)
 
     }
+
+    private func resetGame() {
+        board.reset()
+        boardView.doDraw()
+    }
 }
 
 // MARK: - UICheckersBoardDelegate methods
@@ -146,8 +151,11 @@ extension ViewController {
         let title = (winner == .black ? "Black" : "Red") + " wins!"
 
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.cancel, handler: nil))
-        // TODO: add play again option
+        alert.addAction(UIAlertAction(title: "Cool", style: UIAlertActionStyle.cancel, handler: nil))
+        let resetAction = UIAlertAction(title: "Play Again?", style: .default) { (_) in
+            self.resetGame()
+        }
+        alert.addAction(resetAction)
         present(alert, animated: true, completion: nil)
     }
 
