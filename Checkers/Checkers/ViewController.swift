@@ -105,7 +105,7 @@ extension ViewController {
         for move in moves {
             boardView.removeTileMask(at: move.destination)
 
-            if let jumpIndex = move.jump {
+            if let jumpIndex = move.jumps?.first {
                 boardView.removeTileMask(at: jumpIndex)
             }
         }
@@ -118,7 +118,7 @@ extension ViewController {
         for move in moves {
             boardView.addTileMask(at: move.destination, mask: .green)
 
-            if let jumpIndex = move.jump {
+            if let jumpIndex = move.jumps?.first {
                 boardView.addTileMask(at: jumpIndex, mask: .gray)
             }
         }
@@ -130,13 +130,13 @@ extension ViewController {
         // Do a complete redraw of tiles involved in the move
         boardView.redrawTile(at: move.target)
         boardView.redrawTile(at: move.destination)
-        if let jumpIndex = move.jump {
+        if let jumpIndex = move.jumps?.first {
             boardView.redrawTile(at: jumpIndex)
         }
 
         for ignoredMove in otherMoves {
             boardView.removeTileMask(at: ignoredMove.destination)
-            if let jumpIndex = ignoredMove.jump {
+            if let jumpIndex = ignoredMove.jumps?.first {
                 boardView.removeTileMask(at: jumpIndex)
             }
         }

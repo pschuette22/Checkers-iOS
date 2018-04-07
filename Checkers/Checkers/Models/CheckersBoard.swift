@@ -79,6 +79,16 @@ extension CheckersBoard {
         tiles[index.y][index.x] = tile
     }
 
+    func place(_ piece: TilePiece, withOwner player: Player?, at index: TileIndex) {
+        // Order matters, piece will be nil after owner is set
+        tiles[index.y][index.x].owner = player
+        tiles[index.y][index.x].piece = piece
+    }
+
+    func setEmpty(at index: TileIndex) {
+        tiles[index.y][index.x].owner = nil
+    }
+
     func isKingingTile(at index: TileIndex, for player: Player) -> Bool {
 
         return index.y == (player == .black ? 0 : 7)

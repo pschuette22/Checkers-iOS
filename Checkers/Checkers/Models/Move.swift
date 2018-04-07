@@ -8,20 +8,44 @@
 
 import Foundation
 
+enum MoveType {
+    case simple // simple change of tile
+    case jump // jump piece
+    case stay // stay during chain jump
+}
+
 struct Move: Equatable {
 
     let target: TileIndex!
     let destination: TileIndex!
-    let jump: TileIndex?
+    // List of indexes that were jumped during this turn
+    let jumps: [TileIndex]?
 
-    init(target: TileIndex, destination: TileIndex, jump: TileIndex?) {
+    let type: MoveType
+
+    init(target: TileIndex, destination: TileIndex, jumps: [TileIndex]?) {
         self.target = target
         self.destination = destination
-        self.jump = jump
+        self.jumps = jumps
+
+        if jumps?.count ?? 0 > 0 {
+            type = .jump
+        } else if target == destination {
+            type = .stay
+        } else {
+            type = .simple
+        }
     }
 
     static func ==(lhs: Move, rhs: Move) -> Bool {
         // True if all the elements are the same
-        return lhs.destination == rhs.destination && lhs.target == rhs.target && lhs.jump == rhs.jump
+        if let lhsJumps = lhs.jumps, lhsJumps.count == rhs.jumps?.count ?? 0 {
+            for jump in lhsJumps {
+                if !(rhs.jumps?.contains(jump) ?? false) {
+                    return false
+                }
+            }
+        }
+        return lhs.destination == rhs.destination && lhs.target == rhs.target
     }
 }
