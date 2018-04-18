@@ -24,4 +24,6 @@ protocol GameEngineDelegate: class {
     func didMove(_ move: Move, ignoring otherMoves: [Move])
 
     func didFinishGame(_ winner: Player)
+    
+    func turnDidStart(for player: Player)
 }

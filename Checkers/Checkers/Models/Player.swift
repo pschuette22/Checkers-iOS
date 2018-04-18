@@ -39,6 +39,14 @@ class Player: Hashable {
         self.init(name: player.name, color: player.color, pawnDirection: player.pawnDirection)
     }
 
+    
+    // We put this here to extend it
+    /// This player's turn has started
+    func startTurn() {
+        // Do nothing for now, this user's turn has started
+        print("\(name)'s turn has started!")
+    }
+    
 }
 
 
@@ -55,16 +63,3 @@ extension Player {
         return lhs.hashValue == rhs.hashValue
     }
 }
-
-
-// MARK: - class functions
-extension Player {
-
-    /// This player's turn has started
-    func startTurn() {
-        // Do nothing for now, this user's turn has started
-        print("\(name)'s turn has started!")
-    }
-    
-}
-

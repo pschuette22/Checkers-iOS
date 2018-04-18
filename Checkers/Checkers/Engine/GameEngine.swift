@@ -14,9 +14,9 @@ class GameEngine {
     
     private weak var delegate: GameEngineDelegate?
     
-    private var activePlayer: Player
+    var activePlayer: Player
 
-    private var otherPlayer: Player {
+    var otherPlayer: Player {
         get {
             let isDown = activePlayer.pawnDirection == .down
             let direction: Direction = isDown ? .up : .down
@@ -42,6 +42,7 @@ class GameEngine {
         self.activePlayer = activePlayer
     }
 }
+
 
 // MARK: - Turn State Logic
 extension GameEngine {
@@ -87,17 +88,20 @@ extension GameEngine {
         // This owner has a tile at this location
         // Calculate the moves from here
         selectedTileIndex = index
-        validMoves = calculateMoves(for: player, on: tile, at: index, jumpsOnly: false)
+        validMoves = calculateMoves(for: player, in: delegate!.board, at: index, jumpsOnly: false)
 
         delegate?.didStartTurn(at: index, with: validMoves!)
 
         return true
     }
 
-    private func calculateMoves(for player: Player, on tile: Tile, at index: TileIndex, jumpsOnly: Bool) -> [Move] {
+    func calculateMoves(for player: Player, in board: CheckersBoard, at index: TileIndex, jumpsOnly: Bool) -> [Move] {
 
+        let tile = board.tile(at: index)
+        
         if tile.owner != player {
-            fatalError("Cannot calculate moves for a tile the player does not own")
+            print("Cannot calculate moves for a tile the player does not own")
+            return []
         }
         
         var moves = [Move]()
@@ -113,22 +117,20 @@ extension GameEngine {
         for moveIndex in index.validMoveIndexes(verticleMovements: verticals) {
             // Iterate over the valid move indexes
             // determine if movement to this tile is valid
-            guard let tile = delegate?.board.tile(at: moveIndex) else {
-                continue
-            }
+            let tile = board.tile(at: moveIndex)
 
             if tile.piece == .empty && !jumpsOnly {
                 // add a change position move
-                moves.append(Move(target: index, destination: moveIndex, jumps: nil))
+                moves.append(Move(target: index, destination: moveIndex, jump: nil))
             } else if tile.owner != nil && tile.owner != activePlayer {
                 // This tile is owned by the opponent
-                guard let jumpToIndex = moveIndex.jumpIndex,
-                    let jumpedTile = delegate?.board.tile(at: jumpToIndex) else {
+                guard let jumpToIndex = moveIndex.jumpIndex else {
                     continue
                 }
+                let jumpedTile = board.tile(at: jumpToIndex)
                 if jumpedTile.piece == .empty {
                     // Add a jump move
-                    moves.append(Move(target: index, destination: jumpToIndex, jumps: [moveIndex]))
+                    moves.append(Move(target: index, destination: jumpToIndex, jump: moveIndex))
                 }
             }
 
@@ -139,27 +141,13 @@ extension GameEngine {
 
     private func didMove(_ move: Move, ignoring otherMoves: [Move]) -> Bool {
         // Execute the move logic
-        guard let target = delegate?.board.tile(at: move.target), let destination =  delegate?.board.tile(at: move.destination) else { return false }
+        guard let destination =  delegate?.board.tile(at: move.destination) else { return false }
 
-        let type = move.type
-        if type != .stay {
-            // King the piece as needed
-            if target.piece == .pawn && delegate?.board.isKingingTile(at: move.destination, for: activePlayer) ?? false {
-                target.piece = .king
-            }
-
-            delegate?.board.place(target.piece, withOwner: activePlayer, at: move.destination)
-            delegate?.board.setEmpty(at: move.target)
-
-            if type == .jump, let jumps = move.jumps {
-                delegate?.board.setEmpty(at: jumps.first!)
-            }
-
-        }
+        delegate?.board.player(activePlayer, did: move)
 
         delegate?.didMove(move, ignoring: otherMoves)
 
-        if type == .jump && didSetupJumpChain(fromPrevious: move, on: destination) {
+        if move.type == .jump && didSetupJumpChain(fromPrevious: move, on: destination) {
             return true
         }
 
@@ -177,13 +165,13 @@ extension GameEngine {
         // Is there an opportunity for another jump ?
         // Calculate jump moves for this tile
         let activeTileIndex = move.destination!
-        var doubleJumpMoves = calculateMoves(for: activePlayer, on: tile, at: activeTileIndex, jumpsOnly: true)
+        var doubleJumpMoves = calculateMoves(for: activePlayer, in: delegate!.board, at: activeTileIndex, jumpsOnly: true)
         if doubleJumpMoves.isEmpty {
             return false
         }
 
         // Add stay move
-        let move = Move(target: activeTileIndex, destination: move.destination, jumps: nil)
+        let move = Move(target: activeTileIndex, destination: move.destination, jump: nil)
         doubleJumpMoves.append(move)
         self.validMoves = doubleJumpMoves
         selectedTileIndex = move.destination
@@ -195,9 +183,13 @@ extension GameEngine {
     // Called when a move is completed
     private func didFinishTurn(_ move: Move) -> Bool {
 
+        var keepPlaying = true
         if delegate?.board.tileCount(for: otherPlayer) == 0 {
             didFinishGame(winner: activePlayer)
+            keepPlaying = false
         }
+        
+        // TODO: did this turn create a tie game ?
 
         // Switch the active player
         activePlayer = otherPlayer
@@ -205,6 +197,9 @@ extension GameEngine {
         selectedTileIndex = nil
         isJumpChain = false
         // indicates the player has finished their turn
+        if keepPlaying {
+            delegate?.turnDidStart(for: activePlayer)
+        }
         return true
     }
 

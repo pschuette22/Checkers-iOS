@@ -26,6 +26,22 @@ class CheckersBoard {
         // Should contain an 8x8 multi-array of tiles
         initTiles(player1: player1, player2: player2)
     }
+    
+    
+    /// Initialize the Checkers board given a tile set
+    ///
+    /// - Parameter tiles: tiles on the board
+    init(tiles: [[Tile]]) {
+        self.tiles = tiles
+    }
+    
+    
+    /// Copy constructor
+    ///
+    /// - Parameter board: board to copy
+    convenience init (board: CheckersBoard) {
+        self.init(tiles: board.copyTiles())
+    }
 
 }
 
@@ -104,9 +120,70 @@ extension CheckersBoard {
         }
         return count
     }
+    
+    
+    /// Retrieve all the tiles for each plater
+    ///
+    /// - Parameter player: <#player description#>
+    /// - Returns: <#return value description#>
+    func tiles(for player: Player) -> [(tile: Tile, index: TileIndex)] {
 
+        var result = [(tile: Tile, index: TileIndex)]()
+        for y in 0..<8 {
+            for _x in 0..<4 {
+                let x = (_x * 2) + (y % 2)
+                guard let index = TileIndex(x: x, y: y) else { continue }
+                let mTile = tile(at: index)
+                if mTile.owner == player {
+                    result.append((tile: mTile, index: index))
+                }
+            }
+        }
+        
+        return result
+    }
+
+    func player(_ player: Player, did move: Move) {
+        let type = move.type
+        let target = tile(at: move.target)
+        if type != .stay {
+            // King the piece as needed
+            if target.piece == .pawn && isKingingTile(at: move.destination, for: player) {
+                target.piece = .king
+            }
+            
+            place(target.piece, withOwner: player, at: move.destination)
+            setEmpty(at: move.target)
+            
+            if let jump = move.jump {
+                setEmpty(at: jump)
+            }
+            
+        }
+    }
+    
     func reset(player1: Player, player2: Player) {
         tiles.removeAll()
         initTiles(player1: player1, player2: player2)
     }
+}
+
+
+// MARK: - Functions needed for AI Strategy
+extension CheckersBoard {
+    
+    func copyTiles() -> [[Tile]] {
+        
+        var copy = [[Tile]]()
+        for row in tiles {
+            var rowCopy = [Tile]()
+            for tile in row {
+                rowCopy.append(Tile(tile: tile))
+            }
+            copy.append(rowCopy)
+        }
+        
+        return copy
+    }
+    
 }

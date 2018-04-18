@@ -14,21 +14,23 @@ enum MoveType {
     case stay // stay during chain jump
 }
 
-struct Move: Equatable {
+struct Move: Equatable, Hashable {
+    var hashValue: Int
 
     let target: TileIndex!
     let destination: TileIndex!
     // List of indexes that were jumped during this turn
-    let jumps: [TileIndex]?
+    let jump: TileIndex?
 
     let type: MoveType
 
-    init(target: TileIndex, destination: TileIndex, jumps: [TileIndex]?) {
+    init(target: TileIndex, destination: TileIndex, jump: TileIndex?) {
+        self.hashValue = "\(target.hashValue)\(destination.hashValue)\(String(describing: jump?.hashValue))".hashValue
         self.target = target
         self.destination = destination
-        self.jumps = jumps
+        self.jump = jump
 
-        if jumps?.count ?? 0 > 0 {
+        if jump != nil {
             type = .jump
         } else if target == destination {
             type = .stay
@@ -39,13 +41,6 @@ struct Move: Equatable {
 
     static func ==(lhs: Move, rhs: Move) -> Bool {
         // True if all the elements are the same
-        if let lhsJumps = lhs.jumps, lhsJumps.count == rhs.jumps?.count ?? 0 {
-            for jump in lhsJumps {
-                if !(rhs.jumps?.contains(jump) ?? false) {
-                    return false
-                }
-            }
-        }
-        return lhs.destination == rhs.destination && lhs.target == rhs.target
+        return lhs.jump == rhs.jump && lhs.destination == rhs.destination && lhs.target == rhs.target
     }
 }

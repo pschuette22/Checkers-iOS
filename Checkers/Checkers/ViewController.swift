@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDelegate {
+class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDelegate, AIStrategyDelegate {
 
     var players = Set<Player>()
     
@@ -18,6 +18,8 @@ class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDeleg
  
     var engine: GameEngine!
 
+    let isAgainstAI = true
+    
     private var tapRecognizer: UITapGestureRecognizer!
 
     override func viewDidLoad() {
@@ -31,6 +33,8 @@ class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDeleg
         boardView.addGestureRecognizer(tapRecognizer)
 
         engine = GameEngine(delegate: self, activePlayer: player(going: .up))
+        
+        turnDidStart(for: engine.activePlayer)
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,6 +46,11 @@ class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDeleg
 
         // Ignore this tap
         if recognizer.state != .ended {
+            return
+        }
+        
+        if engine.activePlayer is AIPlayer {
+            // It's the AI's turn.
             return
         }
 
@@ -62,14 +71,20 @@ class ViewController: UIViewController, UICheckersBoardDelegate, GameEngineDeleg
 
 // MARK: - Private class functions
 extension ViewController {
-    
-    
+
     /// Initialize the player set
     private func initPlayers() {
         let player1 = Player(name: "p1", color: .red, pawnDirection: .down)
-        let player2 = Player(name: "p2", color: .black, pawnDirection: .up)
         players.insert(player1)
-        players.insert(player2)
+
+        if isAgainstAI {
+            let strategy = AIStrategy(delegate: self)
+            let player2 = AIPlayer(name: "p2", color: .black, pawnDirection: .up, level: 4, strategy: strategy)
+            players.insert(player2)
+        } else {
+            let player2 = Player(name: "p2", color: .black, pawnDirection: .up)
+            players.insert(player2)
+        }
     }
     
     private func drawInitialBoard() {
@@ -111,11 +126,36 @@ extension ViewController {
 
 }
 
+// MARK: - AIStrategyDelegate methods
+extension ViewController {
+    
+    func otherPlayer(player: Player) -> Player {
+        // Only two players, return the first that isnt the current player
+        return players.first(where: {$0 != player})!
+    }
+    
+}
+
 // MARK: - GameEngineDelegate methods
 extension ViewController {
 
     func player(going direction: Direction) -> Player {
         return players.first(where: {$0.pawnDirection == direction})!
+    }
+    
+    // Saying the turn has started for this player
+    func turnDidStart(for player: Player) {
+        if let aiplayer = player as? AIPlayer {
+            let move = aiplayer.getMove()
+            guard let first = move.moveQueue.first else {
+                // error?
+                return
+            }
+            _ = engine.didSelect(first.target)
+            for _move in move.moveQueue {
+                _ = engine.didSelect(_move.destination)
+            }
+        }
     }
     
     func selectIgnored(_ message: String) {
@@ -128,7 +168,7 @@ extension ViewController {
         for move in moves {
             boardView.removeTileMask(at: move.destination)
 
-            if let jumpIndex = move.jumps?.first {
+            if let jumpIndex = move.jump {
                 boardView.removeTileMask(at: jumpIndex)
             }
         }
@@ -141,7 +181,7 @@ extension ViewController {
         for move in moves {
             boardView.addTileMask(at: move.destination, mask: .green)
 
-            if let jumpIndex = move.jumps?.first {
+            if let jumpIndex = move.jump {
                 boardView.addTileMask(at: jumpIndex, mask: .gray)
             }
         }
@@ -153,13 +193,13 @@ extension ViewController {
         // Do a complete redraw of tiles involved in the move
         boardView.redrawTile(at: move.target)
         boardView.redrawTile(at: move.destination)
-        if let jumpIndex = move.jumps?.first {
+        if let jumpIndex = move.jump {
             boardView.redrawTile(at: jumpIndex)
         }
 
         for ignoredMove in otherMoves {
             boardView.removeTileMask(at: ignoredMove.destination)
-            if let jumpIndex = ignoredMove.jumps?.first {
+            if let jumpIndex = ignoredMove.jump {
                 boardView.removeTileMask(at: jumpIndex)
             }
         }

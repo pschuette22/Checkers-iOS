@@ -73,7 +73,6 @@ extension UIBoardTile {
                 fatalError("Only red and black player colors supported right now")
             }
             if tile.piece == .king {
-                print("It's a King!")
                 text = "[" + text + "]"
                 textView.font = UIFont.boldSystemFont(ofSize: 12.0)
             }

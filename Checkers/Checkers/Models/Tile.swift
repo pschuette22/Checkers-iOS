@@ -37,4 +37,10 @@ class Tile {
         self.piece = piece
         self.owner = owner
     }
+    
+    init(tile: Tile) {
+        self.color = tile.color
+        self.owner = tile.owner
+        self.piece = tile.piece
+    }
 }
