@@ -27,6 +27,10 @@ class AIStrategy {
     
     let bottomMovePruning = 5
     
+    // The board strength delta needed before a potential move to be considered
+    // This is relative to the "best" potential move per back and
+    let pruningDelta = 3
+    
     
     /// Initialize the strategy for the AI Player
     ///
@@ -85,7 +89,7 @@ extension AIStrategy {
         
         let startingState = CheckersBoard(board: board)
         
-        let firstLevel = AIThoughtLevel(strategy: self, boardState: startingState, active: player!, other: other, level: 0, myBoardScore: myBoardScore(), opponentBoardScore: opponentBoardScore())
+        let firstLevel = AIThoughtLevel(strategy: self, boardState: startingState, active: player!, other: other, level: 0, myBoardScore: boardScore(for: player!), opponentBoardScore: boardScore(for: other))
         
         // Builds a tree of potential moves this AI could make
         firstLevel.buildPotentialMoves()
@@ -163,6 +167,9 @@ class AIThoughtLevel {
             return lhs.netScore > rhs.netScore
         }
         
+        // Do Alpha Beta move pruning.
+        
+        
         let topMovePruning = strategy?.topMovePruning ?? 0
         let bottomMovePruning = strategy?.bottomMovePruning ?? 0
         
@@ -171,7 +178,6 @@ class AIThoughtLevel {
             // Remove the medium value moves that are out of top move range
             potentialMoves.removeSubrange(topMovePruning+1..<potentialMoves.count-bottomMovePruning)
             potentialMoves.remove(at: topMovePruning + 1)
-            
         }
         
         for potentialMove in potentialMoves where !potentialMove.isEndOfGame() {
